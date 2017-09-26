@@ -3,7 +3,6 @@ from FileManagement.file_loader import *
 from FileManagement.file_saver import *
 from cmd import *
 from Database import sql_database
-from FileManagement.filehandler import *
 from Validator.data_validator import *
 
 from graph import *
