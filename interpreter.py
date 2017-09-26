@@ -1,5 +1,6 @@
 # all of us
-
+from FileManagement.file_loader import *
+from FileManagement.file_saver import *
 from cmd import *
 from Database import sql_database
 from FileManagement.filehandler import *
@@ -14,11 +15,12 @@ class Interpreter(Cmd):
     # Kris
     def __init__(self, database_name):
         Cmd.__init__(self)
-        self.file_handler = FileHandler()
         self.database = sql_database.SQLDatabase(database_name)
         self.graph = Graph(self.database)
         self.graphs = []
         self.my_validator = DataValidator()
+        self.file_loader = FileLoader()
+        self.file_saver = FileSaver()
 
     # Kris
     # Pull data from database
@@ -31,7 +33,7 @@ class Interpreter(Cmd):
         args = args.split(' ')
         if len(args) == 1:
             file_path = args[0]
-            data = self.file_handler.load_file(file_path)
+            data = self.file_loader.load_file(file_path)
             data_to_add = self.my_validator.validate(data)
             print("adding data")
             print(data_to_add)
@@ -40,7 +42,7 @@ class Interpreter(Cmd):
             file_path = args[1]
             optn = args[0]
             if "-d" in optn:
-                data = self.file_handler.load_file(file_path)
+                data = self.file_loader.load_file(file_path)
                 data_to_add = self.my_validator.validate(data)
                 self.database.write_to_database(data_to_add)
             elif "-g" in optn:
@@ -194,7 +196,7 @@ class Interpreter(Cmd):
         except ValueError:
             print('There is currently no graphs to be saved')
             return
-        self.file_handler.pack_pickle(self.graphs)
+        self.file_saver.pack_pickle(self.graphs)
 
     # Brendan Holt
     # Unpickles the default pickle file (see unpack_pickle in the file handler) to the graphs list
@@ -205,7 +207,7 @@ class Interpreter(Cmd):
         # Ensure graph list is cleared
         self.graphs = []
         # Reload graph list
-        self.graphs = self.file_handler.unpack_pickle(filepath)
+        self.graphs = self.file_loader.unpack_pickle(filepath)
 
     # Brendan Holt
     # Pickles and backs up the entire database
@@ -213,7 +215,7 @@ class Interpreter(Cmd):
     def do_pickle(self, args):
         data = self.database.backup_database()
         print('The above has been pickled to a backup file')
-        self.file_handler.pickle_all(data)
+        self.file_saver.pickle_all(data)
 
     # Help Commands - Kate
     # For each of the do_ commands above, print help info about them
