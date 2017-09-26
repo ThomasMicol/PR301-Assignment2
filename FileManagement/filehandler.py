@@ -14,6 +14,25 @@ class FileHandler(IFileHandler):
     def __init__(self):
         self.valid = True
 
+    def to_object(self, contents):
+        id = contents[0]
+        sex = contents[1]
+        age = contents[2]
+        sales = contents[3]
+        bmi = contents[4]
+        salary = contents[5]
+        dob = contents[6]
+        person = {
+            "id": id,
+            "sex": sex,
+            "age": age,
+            "sales": sales,
+            "bmi": bmi,
+            "salary": salary,
+            "dob": dob
+        }
+        return person
+
     # Kris
     def load_file(self, file):
         # put error handling here
@@ -25,23 +44,30 @@ class FileHandler(IFileHandler):
         else:
             for line in the_file:
                 line = tuple(line.replace('\n', "").split(','))
-                contents.append(line)
+                contents.append(self.to_object(line))
             the_file.close()
+            
             return contents
+
+    def data_to_saveable_string(self, data):
+        string = ""
+        for person in data:
+            string += str(person['id']) + ","
+            string += str(person['sex'])  + ","
+            string += str(person['age'])  + ","
+            string += str(person['sales'])  + ","
+            string += str(person['bmi'])  + ","
+            string += str(person['salary'])  + ","
+            string += str(person['dob'])  + ","
+            string += "\n"
+
+        print(string)
+        return string
 
     # Kris
     def write_file(self, file, data):
         the_file = open(file, 'w')
-        string = ""
-        for l in data:
-            new_data = [l[0], l[1], l[2], l[3], l[4], l[5], l[6]]
-            for i in range(len(new_data)):
-                string += str(new_data[i])
-                # prevent a space at the end of a line
-                if i != len(new_data) - 1:
-                    string += ','
-
-            string += "\n"
+        string = self.data_to_saveable_string(data)
         the_file.write(string)
         the_file.close()
 
@@ -103,9 +129,9 @@ class FileHandler(IFileHandler):
             self.valid = True
             print(person)
             # check the format is a letter and 3 digit e.g A002 or a002
-            if re.match(r'[a-z][0-9]{3}', (person[0]).lower()):
+            if re.match(r'[a-z][0-9]{3}', (person['id']).lower()):
                 # Kris
-                if len(str(person[0])) >= 5:
+                if len(str(person['id'])) >= 5:
                     self.valid = False
             else:
                 # Kris
@@ -114,8 +140,8 @@ class FileHandler(IFileHandler):
 
             # check the format is either M/F/Male/Female
 
-            if person[1].upper() == "M" or (person[1]).upper() == "F":
-                print(person[1])
+            if person['sex'].upper() == "M" or (person['sex']).upper() == "F":
+                print(person['sex'])
             else:
                 # Kris
                 feedback += "Incorect Gender; must be M or F.\n"
@@ -125,45 +151,45 @@ class FileHandler(IFileHandler):
             # Kris
             date_correct = True
             try:
-                datetime.strptime(person[6], "%d-%m-%Y")
+                datetime.strptime(person['dob'], "%d-%m-%Y")
             except ValueError:
                 date_correct = False
-                feedback += "Date is not corrent format! " + str(person[6])
+                feedback += "Date is not corrent format! " + str(person['dob'])
                 self.valid = False
 
             if date_correct:
-                the_date = datetime.strptime(person[6], "%d-%m-%Y")
+                the_date = datetime.strptime(person['dob'], "%d-%m-%Y")
                 test_age = math.floor(((datetime.today() - the_date).days/365))
-                if test_age == int(person[2]):
+                if test_age == int(person['age']):
                     pass
                 else:
                     self.valid = False
-                    feedback += "Age and birthday does not match. " + str(test_age) + ":" + str(int(person[2]))
+                    feedback += "Age and birthday does not match. " + str(test_age) + ":" + str(int(person['age']))
 
             # check sales is 3 interger value
-            if re.match(r'[0-9]{3}', person[3]):
-                print(person[3])
+            if re.match(r'[0-9]{3}', person['sales']):
+                print(person['sales'])
             else:
                 feedback += "Incorrect sales number; must be a 3 digit whole number. \n"
                 self.valid = False
 
             # check BMI is either Normal / Overweight / Obesity or Underweight
-            if re.match(r'\b(NORMAL|OVERWEIGHT|OBESITY|UNDERWEIGHT)\b', (person[4]).upper()):
-                print(person[4])
+            if re.match(r'\b(NORMAL|OVERWEIGHT|OBESITY|UNDERWEIGHT)\b', (person['bmi']).upper()):
+                print(person['bmi'])
             else:
                 feedback += "Incorrect BMI value; Choose from Normal, Overweight, Obesity or Underweight. \n"
                 self.valid = False
 
             # check Income is float
             try:
-                if int(person[5]):
-                    if len(str(int(person[5]))) > 3:
+                if int(person['salary']):
+                    if len(str(int(person['salary']))) > 3:
                         feedback += "Income is too large."
                         self.valid = False
                     else:
                         pass
                 else:
-                    feedback += "Incorrect income; must be an integer number. \n" + str(person[5])
+                    feedback += "Incorrect income; must be an integer number. \n" + str(person['salary'])
                     self.valid = False
             except ValueError:
                 self.valid = False

@@ -62,13 +62,7 @@ class Interpreter(Cmd):
             can_create = False
 
         print(can_create)
-        if can_create:
-            if len(args) > 1:
-                self.file_handler.write_file(args[1], data)
-            else:
-                self.file_handler.write_file(args[0], data)
-        else:
-            print(msg)
+        print(msg)
 
     # Kris
     # This gets all data from the database

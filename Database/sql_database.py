@@ -28,11 +28,11 @@ class SQLDatabase(IDatabase):
 
     def write_to_database(self, data):
         try:
-            for d in data:
+            for person in data:
                 format_str = """INSERT INTO employee (EMPID, Gender, Age, Sales, BMI, Salary, Birthday)
                 VALUES ("{empid}","{gender}","{age}","{sales}","{BMI}","{salary}","{birthday}"); """
-                sql_command = format_str.format(empid=d[0], gender=d[1], age=d[2], sales=d[3], BMI=d[4], salary=d[5],
-                                                birthday=d[6])
+                sql_command = format_str.format(empid=person['id'], gender=person['sex'], age=person['age'],
+                 sales=person['sales'], BMI=person['bmi'], salary=person['salary'],birthday=person['dob'])
                 self.execute_sql(sql_command)
         except IndexError as e:
             print(e)

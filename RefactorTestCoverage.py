@@ -1,74 +1,80 @@
 from interpreter import Interpreter
 from Database.interface_database import IDatabase
+import unittest
 
-class CodeCoverage:
-    def __init__(self):
+class CodeCoverage(unittest.TestCase):
+    def setUp(self):
         self.db_interface = IDatabase()
         self.interpreter = Interpreter("dbName")
+
+    def test_interpreter_dodisplaydata(self):
+        self.interpreter.do_display_data("-o")
+
+    def test_interpreter_doloadfromfile_txtfile(self):
+        self.interpreter.do_load_from_file("file.txt")
+        print(self.interpreter.database.backup_database())
+
+    def test_interpreter_doloadfromfile_txtfile_d(self):
+        self.interpreter.do_load_from_file("-d file.txt")
+        print(self.interpreter.database.backup_database())
     
-    def run_tests(self):
-        self.test_databaseinterface();
+    def test_interpreter_doloadfromfile_txtfile_g(self):
+        self.interpreter.do_load_from_file("-g file.txt")
+        print(self.interpreter.database.backup_database())
 
-    
+    def test_interpreter_doloadfromfile_txtfile_invalid(self):
+        self.interpreter.do_load_from_file("-invalid file.txt")
+        print(self.interpreter.database.backup_database())
 
-    def test_databaseinterface(self):
-        self.test_databaseinterface_execute_sql()
-        self.test_databaseinterface_closeconnection()
-        self.test_databaseinterface_commit()
-        self.test_databaseinterface_setup()
-        self.test_databaseinterface_reset()
-        self.test_databaseinterface_displaydata()
-        self.test_databaseinterface_writetodatabase()
-        self.test_databaseinterface_backupdatabase()
+    def test_interpreter_do_backup_database_o(self):
+        self.interpreter.do_backup_database("-o file.txt")
 
+    def test_interpreter_do_backup_database_invalid(self):
+        self.interpreter.do_backup_database("-invalid")
+
+    def test_interperter_do_get_data(self):
+        self.interpreter.do_get_data("select * from employees")
+
+    def test_interpreter_do_display_graph(self):
+        self.interpreter.do_display_graph("")
+
+    def test_interpreter_do_list_graphs(self):
+        self.interpreter.do_list_graphs("")
+
+    @unittest.expectedFailure
     def test_databaseinterface_execute_sql(self):
-        try:
-            self.db_interface.execute_sql("string")
-        except: 
-            pass
+        self.db_interface.execute_sql("string")
 
+    @unittest.expectedFailure
     def test_databaseinterface_closeconnection(self):
-        try:
-            self.db_interface.close_connection()
-        except: 
-            pass
+        self.db_interface.close_connection()
 
+    @unittest.expectedFailure
     def test_databaseinterface_commit(self):
-        try:
-            self.db_interface.commit()
-        except: 
-            pass
+        self.db_interface.commit()
 
+    @unittest.expectedFailure
     def test_databaseinterface_setup(self):
-        try:
-            self.db_interface.setup()
-        except: 
-            pass
+        self.db_interface.setup()
 
+    @unittest.expectedFailure
     def test_databaseinterface_reset(self):
-        try:
-            self.db_interface.reset()
-        except: 
-            pass
+        self.db_interface.reset()
 
+    @unittest.expectedFailure
     def test_databaseinterface_displaydata(self):
-        try:
-            self.db_interface.display_data()
-        except: 
-            pass
+        self.db_interface.display_data()
 
+    @unittest.expectedFailure
     def test_databaseinterface_writetodatabase(self):
-        try:
-            self.db_interface.write_to_database("string")
-        except: 
-            pass
+        self.db_interface.write_to_database("string")
 
+    @unittest.expectedFailure
     def test_databaseinterface_backupdatabase(self):
-        try:
-            self.db_interface.backup_database()
-        except: 
-            pass
+        self.db_interface.backup_database()
+
     
 
 
-test = CodeCoverage().run_tests();
+if __name__ == "__main__":
+    unittest.main()
