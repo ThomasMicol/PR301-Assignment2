@@ -3,6 +3,8 @@
 from cmd import *
 from Database import sql_database
 from FileManagement.filehandler import *
+from Validator.data_validator import *
+
 from graph import *
 import sys
 
@@ -16,6 +18,7 @@ class Interpreter(Cmd):
         self.database = sql_database.SQLDatabase(database_name)
         self.graph = Graph(self.database)
         self.graphs = []
+        self.my_validator = DataValidator()
 
     # Kris
     # Pull data from database
@@ -29,7 +32,7 @@ class Interpreter(Cmd):
         if len(args) == 1:
             file_path = args[0]
             data = self.file_handler.load_file(file_path)
-            data_to_add = self.file_handler.validate(data)
+            data_to_add = self.my_validator.validate(data)
             print("adding data")
             print(data_to_add)
             self.database.write_to_database(data_to_add)
@@ -38,7 +41,7 @@ class Interpreter(Cmd):
             optn = args[0]
             if "-d" in optn:
                 data = self.file_handler.load_file(file_path)
-                data_to_add = self.file_handler.validate(data)
+                data_to_add = self.my_validator.validate(data)
                 self.database.write_to_database(data_to_add)
             elif "-g" in optn:
                 print("creating graph")
